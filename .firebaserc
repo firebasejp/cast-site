@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "firejpug"
+  },
+  "targets": {
+    "firejpug": {
+      "hosting": {
+        "cast": [
+          "cast-firejpug"
+        ]
+      }
+    }
+  }
+}
