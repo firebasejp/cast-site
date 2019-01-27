@@ -7,6 +7,13 @@ import Layout from '../components/Layout'
 import SEO from '../components/seo'
 import { rhythm, scale } from '../utils/typography'
 
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  TwitterIcon,
+  TwitterShareButton
+} from 'react-share'
+
 class BlogPostTemplate extends React.Component {
   render() {
     const post = this.props.data.markdownRemark
@@ -21,22 +28,45 @@ class BlogPostTemplate extends React.Component {
       return o
     }, {})
     const siteTitle = this.props.data.site.siteMetadata.title
+    const { siteUrl, hashtag } = this.props.data.site.siteMetadata
+    const { slug } = this.props.data.markdownRemark.fields
     const { previous, next } = this.props.pageContext
 
     return (
       <Layout location={this.props.location} title={siteTitle}>
         <SEO title={post.frontmatter.title} description={post.excerpt} />
         <h1 style={{ fontSize: '2rem' }}>{post.frontmatter.title}</h1>
-        <p
+        <div
           style={{
+            display: `flex`,
+            flexDirection: `row`
+          }}>
+          <div style={{
+            flex: 1,
+          }}>
+            <p
+              style={{
+                ...scale(-1 / 5),
+                display: `block`,
+                marginBottom: rhythm(1),
+                marginTop: rhythm(-1),
+              }}
+            >
+              {post.frontmatter.date}
+            </p>
+          </div>
+          <div style={{
             ...scale(-1 / 5),
-            display: `block`,
+            display: `flex`,
+            flexDirection: `row`,
             marginBottom: rhythm(1),
             marginTop: rhythm(-1),
-          }}
-        >
-          {post.frontmatter.date}
-        </p>
+          }}>
+            <TwitterShareButton url={`${siteUrl}${slug}`} hashtags={hashtag}><TwitterIcon size={32} round={true} /></TwitterShareButton>
+            <FacebookShareButton url={`${siteUrl}${slug}`} hashtags={hashtag}><FacebookIcon size={32} round={true} /></FacebookShareButton>
+          </div>
+        </div>
+
         <Player src={post.frontmatter.audioLink}></Player>
         <p>{post.frontmatter.about}</p>
         <div>
@@ -123,6 +153,8 @@ export const pageQuery = graphql`
       siteMetadata {
         title
         author
+        siteUrl
+        hashtag
       }
     }
     avatars: allFile(filter: {absolutePath: {regex: "/icon_[0-9a-zA-Z_]+\\.jpg$/"}}) {
@@ -150,6 +182,9 @@ export const pageQuery = graphql`
       id
       excerpt(pruneLength: 160)
       html
+      fields {
+        slug
+      }
       frontmatter {
         title
         about
