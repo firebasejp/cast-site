@@ -6,7 +6,7 @@
       "redirects": [
         {
           "source": "/file/1.mp3",
-          "destination": "https://firebasestorage.googleapis.com/v0/b/firejpug.appspot.com/o/cast%2F1.mp3?alt=media&token=853bfbd9-af98-4862-b866-bf5f3e9a6d6a",
+          "destination": "https://firebasejp.github.io/cast-site/1.mp3",
           "type": 301
         }
       ]
