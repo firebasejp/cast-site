@@ -1,7 +1,0 @@
-bindings:
-- members:
-  - group:allUsers
-  role: roles/cloudfunctions.invoker
-- members:
-  - group:allUsers
-  role: roles/cloudfunctions.viewer
