@@ -37,7 +37,7 @@ var defaultOptions = {
     return (0, _extends2.default)({}, siteMetadata, rest);
   },
   feeds: [{
-    query: "\n      {\n        allMarkdownRemark(\n          limit: 1000,\n          sort: {\n            order: DESC,\n            fields: [frontmatter___date]\n          }\n        ) {\n          edges {\n            node {\n              frontmatter {\n                title\n                date\n                about\n                contentType\n                duration\n                audioLink\n              }\n              fields {\n                slug\n              }\n              excerpt\n              html\n            }\n          }\n        }\n      }\n    ",
+    query: "\n      {\n        profile: allCastYaml {\n          edges {\n            node {\n              id\n              displayName\n              url\n            }\n          }\n        }\n        allMarkdownRemark(\n          limit: 1000,\n          sort: {\n            order: DESC,\n            fields: [frontmatter___date]\n          }\n        ) {\n          edges {\n            node {\n              frontmatter {\n                title\n                date\n                about\n                starring\n                contentType\n                duration\n                audioLink\n              }\n              fields {\n                slug\n              }\n              excerpt\n              html\n            }\n          }\n        }\n      }\n    ",
     output: "feed.xml",
     title: null
   }]

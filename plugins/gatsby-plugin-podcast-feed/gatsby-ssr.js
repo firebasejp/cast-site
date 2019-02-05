@@ -10,6 +10,8 @@ var _gatsby = require("gatsby");
 
 var _internal = require("./internal");
 
+var _jsxFileName = "/Users/kazu/src/github.com/firebasejp/cast-site/plugins/gatsby-plugin-podcast-feed/src/gatsby-ssr.js";
+
 exports.onRenderBody = function (_ref, pluginOptions) {
   var setHeadComponents = _ref.setHeadComponents;
 
@@ -29,7 +31,12 @@ exports.onRenderBody = function (_ref, pluginOptions) {
       rel: "alternate",
       type: "application/rss+xml",
       title: title,
-      href: (0, _gatsby.withPrefix)(output)
+      href: (0, _gatsby.withPrefix)(output),
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 15
+      },
+      __self: this
     });
   });
   setHeadComponents(links);

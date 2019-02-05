@@ -53,7 +53,7 @@ module.exports = {
             resolve: `gatsby-remark-external-links`,
             options: {
               target: `_blank`,
-              rel: `noopener noreferrer`
+              rel: `noopener`
             }
           },
           `gatsby-remark-prismjs`,
@@ -63,7 +63,7 @@ module.exports = {
             resolve: `gatsby-remark-external-links`,
             options: {
               target: `_blank`,
-              rel: `noopener noreferrer`
+              rel: `noopener`
             }
           }
         ],
@@ -87,6 +87,17 @@ module.exports = {
             category: `Technology`, // https://developers.google.com/search/docs/data-types/podcast#podcast-tags
             image: `https://cast.firebase.asia/icon1500.png`,
             language: 'ja',
+            keywords: [
+              `Firebase`, `GoogleCloudPlatform`, `GCP`,
+              `tech`, `technology`, `programming`, `mobile`,
+              `web`, `development`, `developer`, `software`
+            ],
+            itunes: {
+              owner: {
+                name: `Firebase Japan User Group`,
+                email: `k2.wanko+fjug@gmail.com`
+              }
+            }
           }
         ]
       }
@@ -100,7 +111,7 @@ module.exports = {
         background_color: `#ffffff`,
         theme_color: `#ffab40`,
         display: `minimal-ui`,
-        icon: `content/assets/fjug-icon.png`,
+        icon: `content/assets/fjug-icon.png`
       },
     },
     `gatsby-plugin-offline`,

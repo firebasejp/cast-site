@@ -27,14 +27,18 @@ var publicPath = "./public";
 var serialize = function serialize(_ref) {
   var _ref$query = _ref.query,
       site = _ref$query.site,
-      allMarkdownRemark = _ref$query.allMarkdownRemark;
+      allMarkdownRemark = _ref$query.allMarkdownRemark,
+      profile = _ref$query.profile,
+      image = _ref.image;
   return allMarkdownRemark.edges.map(function (edge) {
     var data = (0, _lodash.default)({}, edge.node.frontmatter);
     var about = data.about,
+        starring = data.starring,
         audioLink = data.audioLink,
         contentType = data.contentType,
-        duration = data.duration;
-    data.pubDate = data.date;
+        duration = data.duration,
+        explicit = data.explicit;
+    data.pubDate = new Date(data.date).toUTCString();
     delete data.date;
     var enclosure = {
       '_attributes': {
@@ -47,12 +51,41 @@ var serialize = function serialize(_ref) {
     delete data.contentType;
     delete data.audioLink;
     delete data.duration;
+    var casts = profile.edges.reduce(function (o, _ref2) {
+      var node = _ref2.node;
+      o[node.id] = node;
+      return o;
+    }, {});
+    var starringHtml = ['<ul>'].concat(starring.map(function (id) {
+      var profile = casts[id];
+
+      if (!profile) {
+        throw new Error("No profile " + id);
+      }
+
+      var displayName = profile.displayName,
+          url = profile.url;
+      return "<li><a href=\"" + url + "\" target=\"_blank\" rel=\"noopener\">" + displayName + "(@" + id + ")</a></li>";
+    })).concat(['</ul>']).join('\n');
+    var description = about + "\n\n<h2>Starring</h2>\n" + starringHtml + "\n\n" + edge.node.html;
     return (0, _extends2.default)({}, data, {
-      description: about + "\n\n" + edge.node.html,
+      description: description,
+      'itunes:subtitle': description,
       enclosure: enclosure,
       'itunes:duration': duration,
-      url: site.siteMetadata.siteUrl + edge.node.fields.slug,
-      guid: site.siteMetadata.siteUrl + edge.node.fields.slug
+      link: site.siteMetadata.siteUrl + edge.node.fields.slug,
+      guid: {
+        '_attributes': {
+          isPermaLink: 'true'
+        },
+        '_text': site.siteMetadata.siteUrl + edge.node.fields.slug
+      },
+      'itunes:explicit': explicit || 'no',
+      'media:thumbnail': {
+        '_attributes': {
+          url: image
+        }
+      }
     });
   });
 };
@@ -60,16 +93,16 @@ var serialize = function serialize(_ref) {
 exports.onPostBuild =
 /*#__PURE__*/
 function () {
-  var _ref3 = (0, _asyncToGenerator2.default)(
+  var _ref4 = (0, _asyncToGenerator2.default)(
   /*#__PURE__*/
-  _regenerator.default.mark(function _callee(_ref2, pluginOptions) {
-    var graphql, options, _iterator, _isArray, _i, _ref4, f, _options$f, setup, locals, serializer, items, header, _f$query$site$siteMet, title, author, description, link, category, image, explicit, language, rss, data, xml, outputPath, outputDir;
+  _regenerator.default.mark(function _callee(_ref3, pluginOptions) {
+    var graphql, options, _iterator, _isArray, _i, _ref5, f, _options$f, setup, locals, serializer, items, header, _f$query$site$siteMet, title, author, description, link, category, image, explicit, language, rss, keywords, data, xml, outputPath, outputDir;
 
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            graphql = _ref2.graphql;
+            graphql = _ref3.graphql;
             delete pluginOptions.plugins;
             options = (0, _lodash.default)({}, _internal.defaultOptions, pluginOptions);
             _context.next = 5;
@@ -90,10 +123,10 @@ function () {
               break;
             }
 
-            return _context.abrupt("break", 45);
+            return _context.abrupt("break", 48);
 
           case 10:
-            _ref4 = _iterator[_i++];
+            _ref5 = _iterator[_i++];
             _context.next = 17;
             break;
 
@@ -105,13 +138,13 @@ function () {
               break;
             }
 
-            return _context.abrupt("break", 45);
+            return _context.abrupt("break", 48);
 
           case 16:
-            _ref4 = _i.value;
+            _ref5 = _i.value;
 
           case 17:
-            f = _ref4;
+            f = _ref5;
 
             if (!f.query) {
               _context.next = 23;
@@ -146,16 +179,40 @@ function () {
             rss = {
               '_attributes': {
                 'version': '2.0',
+                'xmlns:atom': 'http://www.w3.org/2005/Atom',
                 'xmlns:googleplay': 'http://www.google.com/schemas/play-podcasts/1.0',
-                'xmlns:itunes': 'http://www.itunes.com/dtds/podcast-1.0.dtd'
+                'xmlns:itunes': 'http://www.itunes.com/dtds/podcast-1.0.dtd',
+                'xmlns:media': 'http://search.yahoo.com/mrss/',
+                'xml:lang': language || 'en'
               },
               channel: {
+                'atom:link': {
+                  '_attributes': {
+                    href: link + '/' + f.output,
+                    rel: 'self',
+                    type: 'application/rss+xml'
+                  }
+                },
                 title: title,
                 description: description,
                 generator: f.generator || 'GatsbyJS',
                 link: link
               }
             };
+
+            if (f.keywords && Array.isArray(f.keywords)) {
+              keywords = f.keywords.join(',');
+              (0, _lodash.default)(rss.channel, {
+                'media:keywords': keywords,
+                'itunes:keywords': keywords
+              });
+            }
+
+            if (description) {
+              (0, _lodash.default)(rss.channel, {
+                'itunes:subtitle': description
+              });
+            }
 
             if (author) {
               (0, _lodash.default)(rss.channel, {
@@ -164,11 +221,26 @@ function () {
               });
             }
 
+            if (f.itunes && f.itunes.owner) {
+              (0, _lodash.default)(rss.channel, {
+                'itunes:owner': {
+                  'itunes:name': f.itunes.owner.name,
+                  'itunes:email': f.itunes.owner.email
+                }
+              });
+            }
+
             if (category) {
               (0, _lodash.default)(rss.channel, {
                 category: category,
                 'googleplay:category': category,
-                'itunes:category': category
+                'itunes:category': category,
+                'media:category': {
+                  '_attributes': {
+                    scheme: 'http://www.itunes.com/dtds/podcast-1.0.dtd'
+                  },
+                  '_text': category
+                }
               });
             }
 
@@ -209,14 +281,14 @@ function () {
               _mkdirp.default.sync(outputDir);
             }
 
-            _context.next = 43;
+            _context.next = 46;
             return (0, _internal.writeFile)(outputPath, xml);
 
-          case 43:
+          case 46:
             _context.next = 7;
             break;
 
-          case 45:
+          case 48:
           case "end":
             return _context.stop();
         }
@@ -225,6 +297,6 @@ function () {
   }));
 
   return function (_x, _x2) {
-    return _ref3.apply(this, arguments);
+    return _ref4.apply(this, arguments);
   };
 }();

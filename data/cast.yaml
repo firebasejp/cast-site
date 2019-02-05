@@ -1,5 +1,6 @@
 -   id: k2wanko
     displayName: コキチーズ
+    url: https://cast.firebase.asia/cast/k2wanko
     twitter: k2wanko
     role: Security Engineer / Firebase Japan User Group Organizer
     description: |
@@ -8,6 +9,7 @@
       Firebaseが好きでFirebase Japan User Groupを作りました。
 -   id: d_date
     displayName: Daiki Matsudate
+    url: https://cast.firebase.asia/cast/d_date
     twitter: d_date
     role: iOS Developer / Google Developers Experts for Firebase
     description: |

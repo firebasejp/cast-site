@@ -46,6 +46,15 @@ export const defaultOptions = {
     {
       query: `
       {
+        profile: allCastYaml {
+          edges {
+            node {
+              id
+              displayName
+              url
+            }
+          }
+        }
         allMarkdownRemark(
           limit: 1000,
           sort: {
@@ -59,6 +68,7 @@ export const defaultOptions = {
                 title
                 date
                 about
+                starring
                 contentType
                 duration
                 audioLink
