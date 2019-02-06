@@ -118,7 +118,10 @@ query CastPage($id: String!) {
     }
   }
   
-  episodes: allMarkdownRemark(filter: {frontmatter: {starring: {in: [$id]}}}) {
+  episodes: allMarkdownRemark(sort: {
+    order: DESC,
+    fields: [frontmatter___date]
+  }, filter: {frontmatter: {starring: {in: [$id]}}}) {
     edges {
       node {
         fields {
