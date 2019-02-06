@@ -5,7 +5,7 @@ about: 'Firebase Summit 2018でのアップデートを中心に話しました�
 starring: ['d_date', 'k2wanko']
 contentType: audio/mpeg
 duration: 57:31
-audioLink: https://cast.firebase.asia/file/1.mp3
+audioLink: https://firebasejp.github.io/cast-site/1.mp3
 ---
 
 ## Show Notes
